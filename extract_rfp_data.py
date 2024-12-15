@@ -5,50 +5,46 @@ from typing import List, Dict
 from bs4 import BeautifulSoup
 from PyPDF2 import PdfReader
 import spacy
+import logging
 
 # Load spaCy NLP model (use en_core_web_sm or other available free models)
 nlp = spacy.load("en_core_web_sm")
 
 # Define structured fields for extraction
 FIELDS = [
-    "Bid Number",
-    "Title",
-    "Due Date",
-    "Bid Submission Type",
-    "Term of Bid",
-    "Pre Bid Meeting",
-    "Installation",
-    "Bid Bond Requirement",
-    "Delivery Date",
-    "Payment Terms",
-    "Any Additional Documentation Required",
-    "MFG for Registration",
-    "Contract or Cooperative to use",
-    "Model_no",
-    "Part_no",
-    "Product",
-    "contact_info",
-    "company_name",
-    "Bid Summary",
-    "Product Specification",
-    "Value"
+    "Bid Number", "Title", "Due Date", "Bid Submission Type", "Term of Bid",
+    "Pre Bid Meeting", "Installation", "Bid Bond Requirement", "Delivery Date",
+    "Payment Terms", "Any Additional Documentation Required", "MFG for Registration",
+    "Contract or Cooperative to use", "Model_no", "Part_no", "Product", "contact_info",
+    "company_name", "Bid Summary", "Product Specification", "Value"
 ]
 
+# Configure logging
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+
 def extract_text_from_pdf(file_path: str) -> str:
-    """Extracts text from a PDF file."""
-    reader = PdfReader(file_path)
-    text = "\n".join(page.extract_text() for page in reader.pages if page.extract_text())
-    return text
+    """Extracts text from a PDF file using PyPDF2."""
+    try:
+        reader = PdfReader(file_path)
+        text = "\n".join(page.extract_text() for page in reader.pages if page.extract_text())
+        return text
+    except Exception as e:
+        logging.error(f"Failed to extract text from PDF {file_path}: {e}")
+        raise
 
 def extract_text_from_html(file_path: str) -> str:
-    """Extracts text from an HTML file."""
-    with open(file_path, 'r', encoding='utf-8') as f:
-        soup = BeautifulSoup(f, 'html.parser')
-        text = soup.get_text(separator="\n")
-    return text
+    """Extracts text from an HTML file using BeautifulSoup."""
+    try:
+        with open(file_path, 'r', encoding='utf-8') as f:
+            soup = BeautifulSoup(f, 'html.parser')
+            text = soup.get_text(separator="\n")
+        return text
+    except Exception as e:
+        logging.error(f"Failed to extract text from HTML {file_path}: {e}")
+        raise
 
 def extract_fields_with_spacy(text: str) -> Dict[str, str]:
-    """Extracts structured fields using spaCy and regex."""
+    """Extracts structured fields from text using spaCy and regex patterns."""
     doc = nlp(text)
     structured_data = {field: "" for field in FIELDS}
 
@@ -96,19 +92,19 @@ def main(input_folder: str, output_file: str):
     for file_name in os.listdir(input_folder):
         file_path = os.path.join(input_folder, file_name)
         if os.path.isfile(file_path) and file_name.lower().endswith((".pdf", ".html")):
-            print(f"Processing: {file_name}")
+            logging.info(f"Processing: {file_name}")
             try:
                 structured_data = process_document(file_path)
                 structured_data["source_file"] = file_name
                 results.append(structured_data)
             except Exception as e:
-                print(f"Error processing {file_name}: {e}")
+                logging.error(f"Error processing {file_name}: {e}")
 
     # Write results to output JSON
     with open(output_file, 'w', encoding='utf-8') as f:
         json.dump(results, f, indent=4)
 
-    print(f"Processing complete. Results saved to {output_file}")
+    logging.info(f"Processing complete. Results saved to {output_file}")
 
 if __name__ == "__main__":
     import argparse
