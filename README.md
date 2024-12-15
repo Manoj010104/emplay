@@ -2,7 +2,7 @@
 
 ## 📖 Overview
 
-The **RFP Document Data Extractor** is a powerful Python tool designed to extract structured data from Request for Proposal (RFP) documents in **PDF** and **HTML** formats. Leveraging the capabilities of the **spaCy** NLP library for entity recognition and regular expressions for field extraction, this tool simplifies the process of gathering essential information from RFPs.
+The **RFP Document Data Extractor** is a Python-based tool designed to extract structured information from Request for Proposal (RFP) documents in **PDF** and **HTML** formats. This program utilizes **Natural Language Processing (NLP)** techniques, including **spaCy**, to accurately interpret and extract relevant data from various document structures.
 
 ## 🚀 Features
 
@@ -10,10 +10,25 @@ The **RFP Document Data Extractor** is a powerful Python tool designed to extrac
   - **Bid Number**
   - **Title**
   - **Due Date**
+  - **Bid Submission Type**
+  - **Term of Bid**
+  - **Pre Bid Meeting**
+  - **Installation**
+  - **Bid Bond Requirement**
+  - **Delivery Date**
   - **Payment Terms**
-  - **Contact Information**
+  - **Any Additional Documentation Required**
+  - **MFG for Registration**
+  - **Contract or Cooperative to use**
+  - **Model_no**
+  - **Part_no**
+  - **Product**
+  - **Contact Info**
   - **Company Name**
-- **File Format Support**: Works with both **PDF** and **HTML** documents.
+  - **Bid Summary**
+  - **Product Specification**
+  - **Value**
+- **File Format Support**: Processes both **PDF** and **HTML** documents.
 - **Structured Output**: Saves extracted data in a clean and organized **JSON** format.
 
 ## 📦 Requirements
